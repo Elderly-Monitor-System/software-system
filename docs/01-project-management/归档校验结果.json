@@ -1,0 +1,19 @@
+{
+  "created_at_asia_shanghai": "2026-11-22T19:55:18+08:00",
+  "workspace": "F:\\各类文件\\学习\\综测\\大创 26-27\\智护忆途项目工作区",
+  "source_root": "F:\\各类文件\\学习\\综测\\大创 26-27",
+  "originals_preserved": true,
+  "copied_or_extracted_files": 611,
+  "total_imported_bytes": 1254494387,
+  "source_kinds": {
+    "file": 559,
+    "zip_entry": 52
+  },
+  "content_verified_during_import": true,
+  "functional_tests_executed": false,
+  "android_project_created": false,
+  "excluded_tool_paths": [
+    "F:\\各类文件\\学习\\综测\\大创 26-27\\Keil5 MDK5.39(64bit)",
+    "F:\\各类文件\\学习\\综测\\大创 26-27\\Keil5 MDK5.39(64bit) .zip"
+  ]
+}
