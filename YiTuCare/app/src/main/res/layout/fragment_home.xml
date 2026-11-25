@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainer"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="20dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="600dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_home_hero"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:paddingStart="4dp"
+                    android:text="@string/home_overview"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                    android:textColor="#F4FFFB"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/home_device_card"
+                    style="@style/YiTuHomeCard"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="#24F3FFFB"
+                    app:cardCornerRadius="18dp"
+                    app:rippleColor="#44F3FFFB"
+                    app:strokeColor="#33F3FFFB">
+
+                    <LinearLayout
+                        style="@style/YiTuHomeRow"
+                        android:minHeight="68dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            style="@style/YiTuHomeIcon"
+                            android:backgroundTint="#E1F5EE"
+                            app:srcCompat="@drawable/ic_profile_device"
+                            app:tint="#153E39" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/YiTuHomeTitle"
+                                android:text="@string/home_current_device"
+                                android:textColor="#F4FFFB" />
+
+                            <TextView
+                                android:id="@+id/home_device_summary"
+                                style="@style/YiTuHomeSummary"
+                                android:text="@string/home_unbound"
+                                android:textColor="#D7F1E9" />
+                        </LinearLayout>
+
+                        <ImageView
+                            style="@style/YiTuHomeChevron"
+                            android:tint="#D7F1E9" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/home_alert_card"
+                style="@style/YiTuHomeCard"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout style="@style/YiTuHomeRow">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        style="@style/YiTuHomeIcon"
+                        android:backgroundTint="?attr/colorErrorContainer"
+                        app:srcCompat="@drawable/ic_home_bell"
+                        app:tint="?attr/colorOnErrorContainer" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/YiTuHomeTitle"
+                            android:text="@string/home_alerts" />
+
+                        <TextView
+                            android:id="@+id/home_alert_summary"
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_alerts_empty" />
+
+                        <TextView
+                            android:id="@+id/home_alert_meta"
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_alerts_pending"
+                            android:textAppearance="?attr/textAppearanceBodySmall" />
+                    </LinearLayout>
+
+                    <ImageView style="@style/YiTuHomeChevron" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/home_location_card"
+                style="@style/YiTuHomeCard"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout style="@style/YiTuHomeRow">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        style="@style/YiTuHomeIcon"
+                        android:backgroundTint="?attr/colorPrimaryContainer"
+                        app:srcCompat="@drawable/ic_location_pin"
+                        app:tint="?attr/colorOnPrimaryContainer" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/YiTuHomeTitle"
+                            android:text="@string/home_recent_location" />
+
+                        <TextView
+                            android:id="@+id/home_location_summary"
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_location_loading" />
+
+                        <TextView
+                            android:id="@+id/home_location_meta"
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_location_phone_test"
+                            android:textAppearance="?attr/textAppearanceBodySmall" />
+                    </LinearLayout>
+
+                    <ImageView style="@style/YiTuHomeChevron" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/YiTuHomeTitle"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="8dp"
+                android:accessibilityHeading="true"
+                android:paddingStart="3dp"
+                android:text="@string/home_shortcuts" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/home_today_card"
+                    style="@style/YiTuHomeCard"
+                    android:layout_width="0dp"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            style="@style/YiTuHomeIcon"
+                            android:backgroundTint="?attr/colorSecondaryContainer"
+                            app:srcCompat="@drawable/ic_location_track"
+                            app:tint="?attr/colorOnSecondaryContainer" />
+
+                        <TextView
+                            style="@style/YiTuHomeTitle"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/location_history_today" />
+
+                        <TextView
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_track_detail" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/home_range_card"
+                    style="@style/YiTuHomeCard"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            style="@style/YiTuHomeIcon"
+                            android:backgroundTint="?attr/colorTertiaryContainer"
+                            app:srcCompat="@drawable/ic_location_range"
+                            app:tint="?attr/colorOnTertiaryContainer" />
+
+                        <TextView
+                            style="@style/YiTuHomeTitle"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/location_fence" />
+
+                        <TextView
+                            android:id="@+id/home_range_summary"
+                            style="@style/YiTuHomeSummary"
+                            android:text="@string/home_range_unset" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

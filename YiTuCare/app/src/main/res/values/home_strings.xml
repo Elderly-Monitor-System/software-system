@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_overview">监护概览</string>
+    <string name="home_current_device">当前设备</string>
+    <string name="home_unbound">尚未绑定设备</string>
+    <string name="home_alerts">报警动态</string>
+    <string name="home_alerts_empty">暂无本机报警记录</string>
+    <string name="home_alerts_pending">设备报警待接入</string>
+    <string name="home_alerts_latest">最近记录 · %1$s</string>
+    <string name="home_alerts_active">等待回到安全范围 · %1$s</string>
+    <string name="home_recent_location">最近位置</string>
+    <string name="home_location_pending">设备定位待接入</string>
+    <string name="home_location_loading">正在获取位置…</string>
+    <string name="home_location_empty">暂无有效位置</string>
+    <string name="home_location_failed">暂时无法获取位置</string>
+    <string name="home_location_phone_test">手机实测</string>
+    <string name="home_location_device">设备定位</string>
+    <string name="home_location_marked">%1$s · %2$s</string>
+    <string name="home_location_stale">%1$s · 上次有效位置 %2$s</string>
+    <string name="home_location_coordinates">纬度 %1$.5f · 经度 %2$.5f</string>
+    <string name="home_shortcuts">常用功能</string>
+    <string name="home_range_unset">尚未设置</string>
+    <string name="home_range_radius">半径 %1$d 米</string>
+    <string name="home_range_active">已触发提醒</string>
+    <string name="home_track_detail">查看当天路线</string>
+</resources>

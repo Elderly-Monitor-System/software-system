@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>定位地图</title>
+<style>
+  html, body, #map { width:100%; height:100%; margin:0; background:#edf2ef; }
+  .pin { width:20px; height:20px; border:2px solid white; border-radius:50% 50% 50% 0;
+    background:#12685a; transform:rotate(-45deg); box-shadow:0 1px 4px #0005; }
+  .end { background:#cc3544; }
+  .dot { width:18px; height:18px; border:3px solid white; border-radius:50%;
+    box-shadow:0 0 0 1px #0004, 0 2px 6px #0004; background:#2475d3; }
+  .lookup { background:#dc741e; }
+  .stay { background:#173f83; border-width:5px; box-sizing:border-box; }
+</style>
+<div id="map" aria-label="高德地图"></div>
+<script>
+'use strict';
+
+const mapNode = document.getElementById('map');
+let map, loader, geocoder, timer, loading = false, ready = false;
+let frame = {mode:'live'};
+let following = true;
+let centeredOn = '';
+let elderly, phone, tracks = [], circles = [], fenceKey = '';
+
+function emit(type, data = {}) {
+  console.log('YITU_MAP:' + JSON.stringify({type, ...data}));
+}
+
+function marker(point, style, title, click) {
+  const pin = new AMap.Marker({
+    position:point, anchor:style.includes('pin') ? 'bottom-center' : 'center',
+    content:'<div class="' + style + '"></div>', title, zIndex:130
+  });
+  if (click) pin.on('click', click);
+  return pin;
+}
+
+function updateMarker(current, point, style, title, click) {
+  if (!point) {
+    if (current) map.remove(current);
+    return null;
+  }
+  if (current) current.setPosition(point);
+  else {
+    current = marker(point, style, title, click);
+    map.add(current);
+  }
+  return current;
+}
+
+function drawFence(config) {
+  const key = JSON.stringify(config || null);
+  if (key === fenceKey) return;
+  fenceKey = key;
+  if (circles.length) map.remove(circles);
+  circles = [];
+  if (!config) return;
+  const [center, radius, buffer, exceeded] = config;
+  const outline = exceeded ? '#b72235' : '#176852';
+  circles = [
+    new AMap.Circle({center, radius:radius + buffer, zIndex:15, strokeColor:outline,
+      strokeWeight:2, strokeStyle:'dashed', fillColor:outline, fillOpacity:0.09}),
+    new AMap.Circle({center, radius, zIndex:16, strokeColor:outline,
+      strokeWeight:2, fillColor:outline, fillOpacity:0.13})
+  ];
+  map.add(circles);
+}
+
+function draw(reset) {
+  if (!ready) return;
+  drawFence(frame.fence);
+  if (frame.mode === 'live') {
+    if (tracks.length) { map.remove(tracks); tracks = []; }
+    elderly = updateMarker(elderly, frame.elderly, 'pin', frame.elderlyTitle || '老人位置', () => emit('marker'));
+    phone = updateMarker(phone, frame.phone, 'dot', '我的位置');
+    const center = reset === 'phone' ? frame.phone : frame.elderly || frame.phone;
+    const source = reset === 'phone' || !frame.elderly ? 'phone' : 'elderly';
+    if (center && reset) {
+      map.setZoomAndCenter(16, center);
+      centeredOn = source;
+    } else if (center && following) {
+      if (centeredOn === source) map.setCenter(center);
+      else map.setZoomAndCenter(16, center);
+      centeredOn = source;
+    }
+    return;
+  }
+  if (elderly) { map.remove(elderly); elderly = null; }
+  if (phone) { map.remove(phone); phone = null; }
+  const alreadyShowingTrack = tracks.length > 0;
+  if (alreadyShowingTrack) map.remove(tracks);
+  tracks = [];
+  if (frame.mode === 'point' && frame.point) {
+    tracks.push(marker(frame.point, 'dot lookup', '查询位置', () => emit('nearest')));
+  }
+  if (frame.mode === 'track') {
+    const blocks = frame.blocks || [];
+    tracks = blocks.map(path => path.length === 1
+      ? new AMap.CircleMarker({center:path[0], radius:4, fillColor:'#86c8ef', fillOpacity:1, strokeColor:'#fff'})
+      : new AMap.Polyline({path, strokeColor:'#78bbe6', strokeWeight:5, strokeOpacity:0.9}));
+    if (blocks.length) {
+      const first = blocks[0][0];
+      const tail = blocks[blocks.length - 1];
+      const last = tail[tail.length - 1];
+      const single = blocks.length === 1 && tail.length === 1;
+      const end = marker(last, 'pin end', single ? '起点 / 终点' : '终点');
+      if (!single) {
+        const start = marker(first, 'pin', '起点');
+        if (first[0] === last[0] && first[1] === last[1]) {
+          start.setOffset(new AMap.Pixel(-10, 0));
+          end.setOffset(new AMap.Pixel(10, 0));
+        }
+        tracks.push(start);
+      }
+      tracks.push(end);
+      (frame.stays || []).forEach((point, index) =>
+        tracks.push(marker(point, 'dot stay', '停留点', () => emit('stay', {index}))));
+    }
+  }
+  if (tracks.length) {
+    map.add(tracks);
+    if (frame.point) map.setZoomAndCenter(16, frame.point);
+    else if (!alreadyShowingTrack) map.setFitView(tracks, false, [36, 36, 36, 36], 17);
+  }
+}
+
+function setData(data) {
+  if (frame.mode !== data.mode || data.reset) following = true;
+  frame = data;
+  draw(data.reset);
+  if (data.reset === 'phone') following = false;
+  frame.reset = '';
+}
+
+function pauseFollowing() { following = false; }
+
+mapNode.addEventListener('touchstart', event => {
+  if (event.touches.length > 1) pauseFollowing();
+}, {passive:true, capture:true});
+mapNode.addEventListener('wheel', pauseFollowing, {passive:true, capture:true});
+
+function pickCenter(request) {
+  if (!ready) return;
+  const center = map.getCenter();
+  emit('center', {request, longitude:center.getLng(), latitude:center.getLat()});
+}
+
+function focusRange() {
+  if (!ready || !circles.length) return;
+  pauseFollowing();
+  map.setFitView(circles, false, [36, 36, 36, 36], 17);
+}
+
+function focus(position) {
+  if (ready) map.setZoomAndCenter(17, position);
+}
+
+function failed() {
+  if (!loading) return;
+  loading = false;
+  clearTimeout(timer);
+  if (loader) { loader.remove(); loader = null; }
+  if (map) { map.destroy(); map = null; }
+  emit('unavailable');
+}
+
+function startMap(config) {
+  if (ready || loading) return;
+  loading = true;
+  window._AMapSecurityConfig = config.serviceHost
+    ? {serviceHost:config.serviceHost} : {securityJsCode:config.securityCode};
+  const script = document.createElement('script');
+  loader = script;
+  script.src = 'https://webapi.amap.com/maps?v=2.0&key=' + encodeURIComponent(config.key);
+  script.onerror = () => { if (loader === script) failed(); };
+  script.onload = () => {
+    if (!loading || loader !== script) return;
+    if (!window.AMap) { failed(); return; }
+    try {
+      map = new AMap.Map('map', {viewMode:'2D', zoom:frame.elderly || frame.phone ? 16 : 11,
+        center:frame.elderly || frame.phone || undefined, pitchEnable:false, rotateEnable:false});
+      map.on('dragstart', pauseFollowing);
+      map.on('complete', () => {
+        if (!loading || loader !== script) return;
+        loading = false;
+        ready = true;
+        clearTimeout(timer);
+        draw('');
+        emit('ready');
+      });
+    } catch (error) { failed(); }
+  };
+  timer = setTimeout(failed, 15000);
+  document.head.append(script);
+}
+
+function reverse(request, position) {
+  if (!ready) return;
+  AMap.plugin('AMap.Geocoder', () => {
+    geocoder = geocoder || new AMap.Geocoder();
+    geocoder.getAddress(position, (status, result) => {
+      const info = status === 'complete' && result.regeocode;
+      emit('address', {request, address:info ? info.formattedAddress || '' : ''});
+    });
+  });
+}
+
+function search(request, page, pageSize, keyword, center) {
+  if (!ready) return;
+  AMap.plugin('AMap.PlaceSearch', () => {
+    const service = new AMap.PlaceSearch({city:'全国', citylimit:false, pageSize, pageIndex:page});
+    const complete = (status, result) => {
+      const list = status === 'complete' && result && result.poiList;
+      const rows = list && Array.isArray(list.pois) ? list.pois : [];
+      const total = list ? Number(list.count) : 0;
+      const more = Number.isFinite(total) && total > 0 ? page * pageSize < total : rows.length === pageSize;
+      const locations = rows.filter(poi => poi.location).map(poi => ({
+        id:poi.id || '', name:poi.name,
+        address:[poi.pname, poi.cityname, poi.adname, poi.address].filter(Boolean).join(' '),
+        longitude:poi.location.lng, latitude:poi.location.lat
+      }));
+      emit('places', {request, locations, more, failed:status !== 'complete' && status !== 'no_data'});
+    };
+    if (center) service.searchNearBy(keyword, center, 50000, complete);
+    else service.search(keyword, complete);
+  });
+}
+
+window.locationMap = {setData, startMap, reverse, search, pickCenter, pauseFollowing, focus, focusRange};
+</script>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp">
+
+    <TextView
+        android:id="@+id/fence_coordinates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+    <EditText
+        android:id="@+id/fence_radius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/location_fence_radius"
+        android:inputType="number"
+        android:maxLength="5"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/fence_buffer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/location_fence_buffer"
+        android:inputType="number"
+        android:maxLength="5"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/fence_return"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/location_fence_return"
+        android:inputType="number"
+        android:maxLength="5"
+        android:maxLines="1" />
+</LinearLayout>

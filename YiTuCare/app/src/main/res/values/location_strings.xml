@@ -1,0 +1,16 @@
+<resources>
+    <string name="location_enable_map">重试加载</string>
+    <string name="location_recenter">回到老人位置</string>
+    <string name="location_recenter_test">回到手机位置</string>
+    <string name="location_phone">我的位置</string>
+    <string name="location_history">历史轨迹</string>
+    <string name="location_history_today">今日轨迹</string>
+    <string name="location_places">找地点</string>
+    <string name="location_fence">范围提醒</string>
+    <string name="location_fence_cancel">取消选点</string>
+    <string name="location_fence_radius">安全范围半径（米）</string>
+    <string name="location_fence_buffer">外侧缓冲宽度（米）</string>
+    <string name="location_fence_return">回到安全范围后等待多久（秒）</string>
+    <string name="location_place_hint">搜索地点</string>
+    <string name="location_search">搜索</string>
+</resources>
